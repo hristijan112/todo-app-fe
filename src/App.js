@@ -3,14 +3,17 @@ import './App.css';
 import Login from './components/Login'
 import Header from './components/Header'
 import List from './components/List'
+import axios from 'axios'
 
 class App extends React.Component {
   constructor(){
     super()
     this.state = {
       data: [],
-      user: {},
-      a: ""
+      user: null,
+      header: "",
+      newUser: false,
+      isLoggedIn: false
     }
     this.handleSubmit = this.handleSubmit.bind(this)
   }
@@ -23,35 +26,54 @@ class App extends React.Component {
         })
   } 
 
-  handleSubmit(username){
-    // e.preventDefault()
-    // fetch("http://localhost:8080/login", {
-    //     credentials: 'include',
-    //     method: 'POST',
-    //     headers: {
-    //         'Accept': 'application/json',
-    //         'Content-Type': 'application/json',
-    //         'authorization': 'Basic' + this.state.username + ":" + this.state.password
-    //     },
-    //     body: JSON.stringify({
-    //         username: this.state.username,
-    //         password: this.state.password,
-    //       })
-    // })
-    this.setState({a: username})
-    console.log(this.state.a)
+  handleSubmit(username, password){
+    const user = {
+      username: username,
+      password: password
+    }
+
+    axios.post("http://localhost:8080/login/authenticate", user)
+      .then(res => res.data)
+      .then(res => this.setState({header: res}))
 }
 
   render(){
+    if(this.state.header !== "" && this.state.user === null){
+      axios.get("http://localhost:8080/user/current-user", {
+        headers: {
+          Authorization: this.state.header
+        }
+      }).then(res => res.data)
+        .then(res => this.setState({user: res, newUser: true, isLoggedIn: true}))
+    }
+
+    if(this.state.user !== null && this.state.newUser){
+      axios.get("http://localhost:8080/list/byUser", {
+        params: {
+          userId: this.state.user.id
+        },
+        headers: {
+          Authorization: this.state.header
+        }
+      }).then(res => res.data)
+        .then(res => this.setState({data: res, newUser: false}))
+    }
 
     const lists = this.state.data.map(list => {
+        return <List key={list.id} id={list.id} title={list.name} listItems = {list.listItems} />
+      })
+    
+    
+    
+    this.state.data.map(list => {
       return <List key={list.id} id={list.id} title={list.name} listItems = {list.listItems} />
     })
+
 
     return (
       <div className="App">
         <Header />
-        <Login handleSubmit = {this.handleSubmit}/>
+        {!this.state.isLoggedIn && <Login handleSubmit = {this.handleSubmit}/>}
         {lists}
         {/* <List />
         <List /> */}
