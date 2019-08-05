@@ -45,6 +45,7 @@ class App extends React.Component {
         }
       }).then(res => res.data)
         .then(res => this.setState({user: res, newUser: true, isLoggedIn: true}))
+      localStorage.setItem("header", this.state.header)
     }
 
     if(this.state.user !== null && this.state.newUser){
@@ -60,23 +61,23 @@ class App extends React.Component {
     }
 
     const lists = this.state.data.map(list => {
-        return <List key={list.id} id={list.id} title={list.name} listItems = {list.listItems} />
+        return <List key={list.id} id={list.id} title={list.name} listItems = {list.listItems} isLoggedIn = {this.state.isLoggedIn} />
       })
     
-    
-    
-    this.state.data.map(list => {
-      return <List key={list.id} id={list.id} title={list.name} listItems = {list.listItems} />
-    })
+    const item = [{
+      id: 0,
+      itemDesc: "",
+      completed: false,
+      emailNotification: false
+    }]
 
 
     return (
       <div className="App">
         <Header />
         {!this.state.isLoggedIn && <Login handleSubmit = {this.handleSubmit}/>}
+        {this.state.isLoggedIn && <List key={0} id={0} title={""} listItems = {item} />}
         {lists}
-        {/* <List />
-        <List /> */}
       </div>
     )
   }
