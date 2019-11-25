@@ -117,6 +117,7 @@ class List extends React.Component{
                     completed: false, 
                     emailNotifications: false})
                 })))
+        
     }
 
     render(){
@@ -140,7 +141,6 @@ class List extends React.Component{
                         listId = {this.state.listId}
                         showCompleted = {this.state.showCompleted} 
                         isLoggedIn = {this.props.isLoggedIn}
-                        // MADE A CHANGE HERE
                         handleNewListChange = {this.handleNewListChanges}
                         handleItemChange = {this.handleItemChange}
                         handleYes = {(item.id === 0 || this.state.listId === 0) ? this.handlePlus : this.handleOk}
@@ -164,10 +164,9 @@ class List extends React.Component{
                     /> 
                 </div>
 
-                {/* The button right to the title. Will be a checkmark on the first list if the user is logged in.
-                --TODO - ADD CLICK HANDLER */}
+                {/* The button right to the title. Will be a checkmark on the first list if the user is logged in. */}
                 {this.props.isLoggedIn && <button className={this.props.id === 0 ? "btn btn-success" : "btn btn-secondary"} 
-                    onClick = {this.props.id === 0 ? () => this.props.createList(this.state.title, this.state.items) : this.props.removeList}>
+                    onClick = {this.props.id === 0 ? () => this.props.createList(this.state.title, this.state.items) : () => this.props.removeList(this.state.listId)}>
                     <span className={this.props.id === 0 ? "glyphicon glyphicon-ok" : "glyphicon glyphicon-remove"}></span>
                 </button>}
 

@@ -18,6 +18,8 @@ class App extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this)
     this.createList = this.createList.bind(this)
     this.removeList = this.removeList.bind(this)
+    this.handleLogout = this.handleLogout.bind(this)
+    this.handleRegister = this.handleRegister.bind(this)
   }
 
   componentDidMount(){
@@ -27,6 +29,17 @@ class App extends React.Component {
             this.setState({data: data})
         })
   } 
+
+  // For handling the logout button
+  handleLogout(){
+    this.setState({user: null, header: "", newUser: false, isLoggedIn: false})
+    localStorage.removeItem("header")
+    fetch("http://localhost:8080/list/all")
+        .then(res => res.json())
+        .then(data => {
+            this.setState({data: data})
+        })
+  }
 
   // For creating a new list with items
   createList(title, items){
@@ -39,13 +52,25 @@ class App extends React.Component {
       headers: {
         Authorization: localStorage.getItem("header")
       }
+    }).then(data => this.setState(prevState => ({
+      data: prevState.data.concat(data.data)
+    })))
+  }
+
+  // For removing a list with its items
+  removeList(id){
+    axios.delete("http://localhost:8080/list/delete/" + id, {
+      headers: {
+        Authorization: localStorage.getItem("header")
+      }
     })
+    
+    this.setState(prevState => ({
+      data: prevState.data.filter(list => Number(list.id) !== Number(id))
+    }))
   }
 
-  removeList(){
-
-  }
-
+  // For logging in users
   handleSubmit(username, password){
     const user = {
       username: username,
@@ -55,7 +80,13 @@ class App extends React.Component {
     axios.post("http://localhost:8080/login/authenticate", user)
       .then(res => res.data)
       .then(res => this.setState({header: res}))
-}
+  }
+
+  // For registering new users
+  handleRegister(data){
+    axios.post("http://localhost:8080/user/post", data)
+      .then(returnedData => console.log(returnedData.data))
+  }
 
   render(){
     if(this.state.header !== "" && this.state.user === null){
@@ -94,8 +125,8 @@ class App extends React.Component {
 
     return (
       <div className="App">
-        <Header />
-        {!this.state.isLoggedIn && <Login handleSubmit = {this.handleSubmit}/>}
+        <Header handleLogout = {this.handleLogout} />
+        {!this.state.isLoggedIn && <Login handleSubmit = {this.handleSubmit} handleRegister = {this.handleRegister} />}
         {this.state.isLoggedIn && <List key={0} id={0} title={""} listItems = {item} isLoggedIn = {this.state.isLoggedIn} createList = {this.createList} />}
 
         {lists}

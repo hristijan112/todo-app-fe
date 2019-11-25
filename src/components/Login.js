@@ -6,6 +6,7 @@ class Login extends React.Component{
         this.state = {
             username: "",
             password: "",
+            email: "",
             register: false
         }
         this.handleChange = this.handleChange.bind(this)
@@ -54,9 +55,14 @@ class Login extends React.Component{
                     <input name="email" type="text" className="form-control" id="email" value={this.state.email} onChange = {this.handleChange} />
                 </div>
                 </div>
-                <input className = "btn btn-success" type = "button" onClick= {() => this.props.handleSubmit(this.state.username, this.state.password)} 
+                <input className = "btn btn-success" type = "button" 
+                    onClick= {this.state.register ? 
+                        () => this.props.handleRegister({username: this.state.username, password: this.state.password, email: this.state.email, role: "USER"}) : 
+                        () => this.props.handleSubmit(this.state.username, this.state.password)} 
                     value = {this.state.register ? "Register" : "Login"} />
-                <button className="btn btn-success" onClick = {this.handleRegister}>{this.state.register ? "Login Form" : "Register Form"}</button>
+                <input className = "btn btn-success" type = "button" 
+                    onClick = {this.handleRegister} 
+                    value = {this.state.register ? "Login Form" : "Register Form"} />
                 </form>
                 <br />
             </div>
