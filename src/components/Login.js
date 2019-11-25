@@ -54,7 +54,7 @@ class Login extends React.Component{
                     <input name="email" type="text" className="form-control" id="email" value={this.state.email} onChange = {this.handleChange} />
                 </div>
                 </div>
-                <input className = "btn btn-success" type = "button" onClick = {() => this.props.handleSubmit(this.state.username, this.state.password)} 
+                <input className = "btn btn-success" type = "button" onClick= {() => this.props.handleSubmit(this.state.username, this.state.password)} 
                     value = {this.state.register ? "Register" : "Login"} />
                 <button className="btn btn-success" onClick = {this.handleRegister}>{this.state.register ? "Login Form" : "Register Form"}</button>
                 </form>

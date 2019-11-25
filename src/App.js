@@ -16,6 +16,8 @@ class App extends React.Component {
       isLoggedIn: false
     }
     this.handleSubmit = this.handleSubmit.bind(this)
+    this.createList = this.createList.bind(this)
+    this.removeList = this.removeList.bind(this)
   }
 
   componentDidMount(){
@@ -25,6 +27,24 @@ class App extends React.Component {
             this.setState({data: data})
         })
   } 
+
+  // For creating a new list with items
+  createList(title, items){
+    const list = {
+      name: title,
+      userId: this.state.user.id,
+      listItems: items.map(item => {return {itemDesc: item.itemDesc, completed: false, emailNotification: false}})
+    }
+    axios.post("http://localhost:8080/list/post", list, {
+      headers: {
+        Authorization: localStorage.getItem("header")
+      }
+    })
+  }
+
+  removeList(){
+
+  }
 
   handleSubmit(username, password){
     const user = {
@@ -61,7 +81,7 @@ class App extends React.Component {
     }
 
     const lists = this.state.data.map(list => {
-        return <List key={list.id} id={list.id} title={list.name} listItems = {list.listItems} isLoggedIn = {this.state.isLoggedIn} />
+        return <List key={list.id} id={list.id} title={list.name} listItems = {list.listItems} isLoggedIn = {this.state.isLoggedIn} removeList = {this.removeList} />
       })
     
     const item = [{
@@ -76,7 +96,8 @@ class App extends React.Component {
       <div className="App">
         <Header />
         {!this.state.isLoggedIn && <Login handleSubmit = {this.handleSubmit}/>}
-        {this.state.isLoggedIn && <List key={0} id={0} title={""} listItems = {item} />}
+        {this.state.isLoggedIn && <List key={0} id={0} title={""} listItems = {item} isLoggedIn = {this.state.isLoggedIn} createList = {this.createList} />}
+
         {lists}
       </div>
     )
