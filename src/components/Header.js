@@ -14,7 +14,7 @@ class Header extends React.Component{
                     <p className="navbar-brand" style={{fontWeight: 'bold', fontSize: '30px'}}>
                         ToDo List
                     </p>
-                    <p className="text-right" style={{fontSize: '20px'}}>
+                    <p onClick = {this.props.handleLogout} className="text-right" style={{fontSize: '20px'}}>
                         logout
                     </p>
                 </nav>
